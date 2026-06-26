@@ -225,6 +225,38 @@ if uploaded_file:
                                     return str(val).strip()
 
             return ""
+            
+        # ==================================================
+        # EXPORT TO TRACKER
+        # ==================================================
+        
+        def export_to_tracker(project_name,
+                              employee_name,
+                              pcode,
+                              amount):
+        
+            tracker_file = "Tracker.xlsx"
+        
+            if not os.path.exists(tracker_file):
+                st.error("Tracker.xlsx not found!")
+                return
+        
+            wb = load_workbook(tracker_file)
+        
+            ws = wb["Tracker"]
+        
+            today = datetime.now().strftime("%d-%m-%Y")
+        
+            ws.append([
+                today,
+                project_name,
+                employee_name,
+                pcode,
+                amount
+            ])
+        
+            wb.save(tracker_file)
+                          
 
         # ==================================================
         # EMPLOYEE DETAILS
@@ -876,5 +908,22 @@ color:{color};">
 
 </div>
 """, unsafe_allow_html=True)
+
+
+        st.divider()
+        
+        st.subheader("📤 Export")
+        
+        if st.button("📤 Export to Workbook", use_container_width=True):
+        
+            export_to_tracker(
+                project_name,
+                employee_name,
+                employee_id,
+                expenses_total
+            )
+        
+            st.success("✅ Successfully exported to Tracker.xlsx")
+            
     except Exception as e:
          st.error(f"❌ Error: {e}")
